@@ -122,9 +122,8 @@ class AdminDataController  < ApplicationController
   def index
     @klasses = []
     models = []
-
-    model_dir = File.join(RAILS_ROOT,'app','models')
-    Dir.chdir(model_dir) { models = Dir["**/*.rb"] }
+    
+    models = ActiveRecord::Base.connection.tables.map{|t| t.singularize.to_s }
     
     models = models.sort
     
