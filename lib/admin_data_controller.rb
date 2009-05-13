@@ -214,7 +214,15 @@ class AdminDataController  < ApplicationController
     
     model_attrs = params[model_name_underscored]
     
-    if @model.update_attributes(model_attrs)
+    if params[:commit] == 'Save without Validation!'
+      @model.attributes = model_attrs
+      if @model.save(false)
+        flash[:success] = "Record was Updated without Validation!"
+        redirect_to admin_data_show_path(:model_id => @model.id, :klass => @klass.to_s)
+      else
+        render :file =>   "#{RAILS_ROOT}/vendor/plugins/admin_data/lib/views/edit.html.erb"
+      end
+    elsif @model.update_attributes(model_attrs)
       flash[:success] = "Record was Updated"
       redirect_to admin_data_show_path(:model_id => @model.id, :klass => @klass.to_s)
     else
